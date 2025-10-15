@@ -1,0 +1,22 @@
+name: Publish
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+      - run: npm install --frozen-lockfile
+      - name: Create Pull Request or Publish
+        id: changeset
+        uses: changesets/action@v2
+        with:
+          publish: npm run build
