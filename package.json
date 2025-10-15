@@ -24,7 +24,8 @@
   "scripts": {
     "build": "tsdown index.ts --format cjs,esm --dts",
     "lint": "tsc",
-    "test": "echo \"No test specified\""
+    "test": "echo \"No test specified\"",
+    "add-version": "npx changeset"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
