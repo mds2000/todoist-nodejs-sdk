@@ -1,0 +1,34 @@
+{
+  "name": "todoist-nodejs-sdk",
+  "version": "0.0.1",
+  "description": "Unofficial Todoist SDK for Node.js",
+  "keywords": [
+    "Todoist",
+    "SDK",
+    "Node.js"
+  ],
+  "homepage": "https://github.com/mds2000/todoist-nodejs-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/mds2000/todoist-nodejs-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mds2000/todoist-nodejs-sdk.git"
+  },
+  "license": "MIT",
+  "author": "Matías da Silva",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsdown index.ts --format cjs,esm --dts",
+    "lint": "tsc",
+    "test": "echo \"No test specified\""
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.7",
+    "tsdown": "^0.15.7",
+    "typescript": "^5.9.3"
+  }
+}
