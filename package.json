@@ -24,6 +24,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsdown index.ts --format cjs,esm --dts",
+    "release": "npm run build && npx changeset publish",
     "lint": "tsc",
     "test": "echo \"No test specified\"",
     "add-version": "npx changeset"
