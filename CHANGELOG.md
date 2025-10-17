@@ -1,5 +1,11 @@
 # todoist-nodejs-sdk
 
+## 0.0.9
+
+### Patch Changes
+
+- c0c7958: fix release
+
 ## 0.0.8
 
 ### Patch Changes
