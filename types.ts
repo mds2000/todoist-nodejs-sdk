@@ -69,6 +69,10 @@ export interface GetProjectsRequest {
   limit?: number;
 }
 
+export interface GetArchivedProjectsRequest {
+  limit?: number;
+}
+
 export interface GetAllTasksRequest {
   projectId?: string | number;
   sectionId?: string | number;
