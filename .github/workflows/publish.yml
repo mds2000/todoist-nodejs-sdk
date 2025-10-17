@@ -10,20 +10,18 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       pull-requests: write
-      issues: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 24
       - run: npm install --frozen-lockfile
-      - name: Create Pull Request or Publish
-        id: changeset
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
         uses: changesets/action@v1
         with:
-          publish: npm run build && npm publish --access public
+          publish: yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
