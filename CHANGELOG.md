@@ -1,5 +1,12 @@
 # todoist-nodejs-sdk
 
+## 0.0.5
+
+### Patch Changes
+
+- 75d9274: fix gh actions permissions
+- 971d491: fix publish workflow
+
 ## 0.0.4
 
 ### Patch Changes
