@@ -1,5 +1,11 @@
 # todoist-nodejs-sdk
 
+## 0.0.10
+
+### Patch Changes
+
+- fc205d6: fix release
+
 ## 0.0.9
 
 ### Patch Changes
