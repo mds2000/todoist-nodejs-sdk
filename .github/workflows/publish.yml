@@ -18,12 +18,14 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 24
-      - run: npm install --frozen-lockfile
-      - name: Create Release Pull Request or Publish to npm
+      - run: npm ci
+      - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
-        with:
-          publish: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: npm publish --access public
+        env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

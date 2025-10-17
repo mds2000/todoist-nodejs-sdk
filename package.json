@@ -1,6 +1,7 @@
 {
   "name": "todoist-nodejs-sdk",
   "version": "0.0.6",
+  "private": false,
   "description": "Unofficial Todoist SDK for Node.js",
   "keywords": [
     "Todoist",
