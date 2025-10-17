@@ -1,5 +1,6 @@
 import {
   GetAllTasksRequest,
+  GetProjectsRequest,
   Method,
   Project,
   Task,
@@ -21,15 +22,17 @@ export class Todoist {
     this.apiKey = apiKey;
   }
 
-  private async callTodoistApi({ resource, method, body, query = {} }: TodoistCallArgs): Promise<any> {
+  private async callTodoistApi({ resource, method, body, query }: TodoistCallArgs): Promise<any> {
     try {
       let url = `${todoistApiUrl}${resource}`;
       const headers = {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       };
-      const params = new URLSearchParams(query);
-      url += `?${params.toString()}`;
+      if (query) {
+        const params = new URLSearchParams(query);
+        url += `?${params.toString()}`;
+      }
       const response = await fetch(url, {
         method,
         headers,
