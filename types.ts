@@ -65,6 +65,10 @@ export interface Task {
   id: string;
 }
 
+export interface GetProjectsRequest {
+  limit?: number;
+}
+
 export interface GetAllTasksRequest {
   projectId?: string | number;
   sectionId?: string | number;

@@ -48,10 +48,11 @@ export class Todoist {
   }
 
   public readonly projects = {
-    getAllProjects: async (): Promise<Project[]> => {
+    getProjects: async (request?: GetProjectsRequest): Promise<Project[]> => {
       const response = await this.callTodoistApi({
         resource: resources.projects,
         method: Method.Get,
+        query: request,
       });
       return response.results.map((p: any) => ({
         id: p.id,
