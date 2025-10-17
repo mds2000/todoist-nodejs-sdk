@@ -1,5 +1,11 @@
 # todoist-nodejs-sdk
 
+## 0.0.6
+
+### Patch Changes
+
+- 8056966: fix release
+
 ## 0.0.5
 
 ### Patch Changes
