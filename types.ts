@@ -61,6 +61,33 @@ export interface Project {
   isShared: boolean;
 }
 
+export interface ProjectColaborator {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export enum ProjectCollaboratorActionName {
+  CREATOR = 'CREATOR',
+  ADMIN = 'ADMIN',
+  READ_WRITE = 'READ_WRITE',
+  READ_ONLY = 'READ_ONLY',
+}
+
+export interface Action {
+  name: string;
+}
+
+export interface CollaboratorAction {
+  actions: Action[];
+  name: ProjectCollaboratorActionName;
+}
+
+export interface ProjectPermissions {
+  projectCollaboratorActions: CollaboratorAction[];
+  workspaceCollaboratorActions: CollaboratorAction[];
+}
+
 export interface Task {
   id: string;
 }
@@ -71,6 +98,31 @@ export interface GetProjectsRequest {
 
 export interface GetArchivedProjectsRequest {
   limit?: number;
+}
+
+export interface GetProjectColaboratorsRequest {
+  projectId: string;
+  limit?: number;
+  publicKey?: string;
+}
+
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+  parentId?: string | number;
+  color?: string | number;
+  isFavorite?: boolean;
+  viewStyle?: string;
+}
+
+export interface UpdateProjectRequest {
+  projectId: string;
+  name?: string;
+  description?: string;
+  color?: string | number;
+  isFavorite?: boolean;
+  viewStyle?: string;
+  isCollapsed?: boolean;
 }
 
 export interface GetAllTasksRequest {
