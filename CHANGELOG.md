@@ -1,5 +1,15 @@
 # todoist-nodejs-sdk
 
+## 0.0.11
+
+### Patch Changes
+
+- ca55edf: updateProject
+- ca55edf: createProject
+- ded0e03: getProjectById
+- ca55edf: getProjectColaborators
+- ca55edf: getProjectPermissions
+
 ## 0.0.10
 
 ### Patch Changes
