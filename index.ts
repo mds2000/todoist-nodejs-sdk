@@ -37,10 +37,10 @@ export class Todoist {
       const response = await fetch(url, {
         method,
         headers,
-        body,
+        body: body ? JSON.stringify(body) : undefined,
       });
       const responseJson = await response.json();
-      if (responseJson.error || responseJson.http_code) {
+      if (!response.ok || responseJson.error || responseJson.http_code) {
         throw new TodoistError(responseJson.error || responseJson.http_code, {
           cause: responseJson,
         });
