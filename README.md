@@ -3,6 +3,8 @@
 [![npm version](https://badge.fury.io/js/todoist-nodejs-sdk.svg)](https://badge.fury.io/js/todoist-nodejs-sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> **🚧 Work in Progress**: This SDK is actively being developed and will be continuously updated to provide comprehensive coverage of the entire Todoist API. New endpoints and features are being added regularly. Check the [changelog](CHANGELOG.md) for the latest updates!
+
 An unofficial, lightweight TypeScript/JavaScript SDK for integrating with the Todoist API in Node.js applications.
 
 ## Installation
