@@ -138,6 +138,11 @@ new Todoist({ apiKey: string });
 - `createProject(request: CreateProjectRequest): Promise<Project>`
 - `updateProject(request: UpdateProjectRequest): Promise<Project>`
 
+##### Sections
+
+- `getSections(request?: GetSectionsRequest): Promise<Section[]>`
+- `createSection(request: CreateSectionRequest): Promise<Section>`
+
 ##### Tasks
 
 - `getTasks(request: GetAllTasksRequest): Promise<Task[]>`

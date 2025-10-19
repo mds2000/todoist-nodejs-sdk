@@ -88,6 +88,20 @@ export interface ProjectPermissions {
   workspaceCollaboratorActions: CollaboratorAction[];
 }
 
+export interface Section {
+  id: string;
+  name: string;
+  userId: string;
+  projectId: string;
+  addedAt: string;
+  updatedAt: string;
+  archivedAt: string;
+  sectionOrder: number;
+  isArchived: boolean;
+  isCollapsed: boolean;
+  isDeleted: boolean;
+}
+
 export interface Task {
   id: string;
 }
@@ -132,4 +146,15 @@ export interface GetAllTasksRequest {
   label?: string;
   ids?: string[];
   limit?: number;
+}
+
+export interface GetSectionsRequest {
+  projectId?: string;
+  limit?: number;
+}
+
+export interface CreateSectionRequest {
+  name: string;
+  projectId: string;
+  order?: number;
 }
