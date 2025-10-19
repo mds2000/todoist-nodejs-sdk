@@ -1,5 +1,13 @@
 # todoist-nodejs-sdk
 
+## 0.0.12
+
+### Patch Changes
+
+- 7254c8a: getSections
+- 7254c8a: README guide
+- 7254c8a: createSection
+
 ## 0.0.11
 
 ### Patch Changes
