@@ -52,6 +52,39 @@ export class Todoist {
   }
 
   public readonly projects = {
+    getProjectById: async (projectId: string): Promise<Project> => {
+      if (!projectId) {
+        throw new TodoistError('projectId is required to getProjectById');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.projects}/${projectId}`,
+        method: Method.Get,
+      });
+      return {
+        id: response.id,
+        canAssignTasks: response.can_assign_tasks,
+        childOrder: response.child_order,
+        color: response.color,
+        creatorUid: response.creator_uid,
+        createdAt: response.created_at,
+        isArchived: response.is_archived,
+        isDeleted: response.is_deleted,
+        isFavorite: response.is_favorite,
+        isFrozen: response.is_frozen,
+        name: response.name,
+        updatedAt: response.updated_at,
+        viewStyle: response.view_style,
+        defaultOrder: response.default_order,
+        description: response.description,
+        publicKey: response.public_key,
+        role: response.role,
+        parentId: response.parent_id,
+        inboxProject: response.inbox_project,
+        isCollapsed: response.is_collapsed,
+        isShared: response.is_shared,
+      };
+    },
     getProjects: async (request?: GetProjectsRequest): Promise<Project[]> => {
       const response = await this.callTodoistApi({
         resource: resources.projects,
