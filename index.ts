@@ -1,13 +1,16 @@
 import {
   CreateProjectRequest,
+  CreateSectionRequest,
   GetAllTasksRequest,
   GetArchivedProjectsRequest,
   GetProjectColaboratorsRequest,
   GetProjectsRequest,
+  GetSectionsRequest,
   Method,
   Project,
   ProjectColaborator,
   ProjectPermissions,
+  Section,
   Task,
   TodoistArgs,
   TodoistCallArgs,
@@ -254,6 +257,56 @@ export class Todoist {
         inboxProject: response.inbox_project,
         isCollapsed: response.is_collapsed,
         isShared: response.is_shared,
+      };
+    },
+  };
+
+  public readonly sections = {
+    getSections: async (request?: GetSectionsRequest): Promise<Section[]> => {
+      const response = await this.callTodoistApi({
+        resource: resources.sections,
+        method: Method.Get,
+        query: request,
+      });
+      return response.results.map((s: any) => ({
+        id: s.id,
+        name: s.name,
+        projectId: s.project_id,
+        order: s.order,
+        isCollapsed: s.is_collapsed,
+        createdAt: s.created_at,
+        updatedAt: s.updated_at,
+      }));
+    },
+    createSection: async (request: CreateSectionRequest): Promise<Section> => {
+      if (!request.name) {
+        throw new TodoistError('name is required to createSection');
+      }
+      if (!request.projectId) {
+        throw new TodoistError('projectId is required to createSection');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: resources.sections,
+        method: Method.Post,
+        body: {
+          name: request.name,
+          project_id: request.projectId,
+          ...(request.order ? { order: request.order } : {}),
+        },
+      });
+      return {
+        id: response.id,
+        name: response.name,
+        userId: response.user_id,
+        projectId: response.project_id,
+        sectionOrder: response.section_order,
+        isCollapsed: response.is_collapsed,
+        addedAt: response.added_at,
+        updatedAt: response.updated_at,
+        archivedAt: response.archived_at,
+        isArchived: response.is_archived,
+        isDeleted: response.is_deleted,
       };
     },
   };
