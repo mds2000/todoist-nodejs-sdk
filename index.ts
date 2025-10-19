@@ -163,7 +163,7 @@ export class Todoist {
           ...(request.publicKey ? { public_key: request.publicKey } : {}),
         },
       });
-      return response.results.map((c) => ({
+      return response.results.map((c: any) => ({
         id: c.id,
         name: c.name,
         email: c.email,
@@ -175,13 +175,13 @@ export class Todoist {
         method: Method.Get,
       });
       return {
-        projectCollaboratorActions: response.project_collaborator_actions.map((action) => ({
+        projectCollaboratorActions: response.project_collaborator_actions.map((action: any) => ({
           name: action.name,
-          actions: action.actions.map((a) => a.name),
+          actions: action.actions.map((a: any) => a.name),
         })),
-        workspaceCollaboratorActions: response.workspace_collaborator_actions.map((action) => ({
+        workspaceCollaboratorActions: response.workspace_collaborator_actions.map((action: any) => ({
           name: action.name,
-          actions: action.actions.map((a) => a.name),
+          actions: action.actions.map((a: any) => a.name),
         })),
       };
     },
