@@ -309,6 +309,29 @@ export class Todoist {
         isDeleted: response.is_deleted,
       };
     },
+    getSectionById: async (sectionId: string): Promise<Section> => {
+      if (!sectionId) {
+        throw new TodoistError('sectionId is required to getSectionById');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.sections}/${sectionId}`,
+        method: Method.Get,
+      });
+      return {
+        id: response.id,
+        name: response.name,
+        userId: response.user_id,
+        projectId: response.project_id,
+        sectionOrder: response.section_order,
+        isCollapsed: response.is_collapsed,
+        addedAt: response.added_at,
+        updatedAt: response.updated_at,
+        archivedAt: response.archived_at,
+        isArchived: response.is_archived,
+        isDeleted: response.is_deleted,
+      };
+    },
   };
 
   public readonly tasks = {
