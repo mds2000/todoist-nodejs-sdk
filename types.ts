@@ -158,3 +158,8 @@ export interface CreateSectionRequest {
   projectId: string;
   order?: number;
 }
+
+export interface UpdateSectionRequest {
+  sectionId: string;
+  name: string;
+}

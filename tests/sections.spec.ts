@@ -254,4 +254,109 @@ describe('Todoist Sections', () => {
       await expect(todoist.sections.getSectionById('section789')).rejects.toThrow(TodoistError);
     });
   });
+
+  describe('updateSection', () => {
+    it('should successfully update a section', async () => {
+      const mockResponse = {
+        id: 'section123',
+        name: 'Updated Section Name',
+        user_id: 'user123',
+        project_id: 'project456',
+        section_order: 2,
+        is_collapsed: false,
+        added_at: '2024-02-01T00:00:00Z',
+        updated_at: '2024-03-01T00:00:00Z',
+        archived_at: null,
+        is_archived: false,
+        is_deleted: false,
+      };
+
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const section = await todoist.sections.updateSection({
+        sectionId: 'section123',
+        name: 'Updated Section Name',
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith('https://api.todoist.com/api/v1/sections/section123', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Updated Section Name',
+        }),
+      });
+
+      expect(section.id).toBe('section123');
+      expect(section.name).toBe('Updated Section Name');
+      expect(section.userId).toBe('user123');
+      expect(section.projectId).toBe('project456');
+      expect(section.sectionOrder).toBe(2);
+      expect(section.updatedAt).toBe('2024-03-01T00:00:00Z');
+    });
+
+    it('should throw error when sectionId is missing', async () => {
+      await expect(todoist.sections.updateSection({ sectionId: '', name: 'Test' })).rejects.toThrow(
+        'sectionId is required to updateSection',
+      );
+    });
+
+    it('should throw error when name is missing', async () => {
+      await expect(todoist.sections.updateSection({ sectionId: 'section123', name: '' })).rejects.toThrow(
+        'name is required to updateSection',
+      );
+    });
+
+    it('should handle API error', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        json: async () => ({ error: 'Failed to update section' }),
+      });
+
+      await expect(
+        todoist.sections.updateSection({
+          sectionId: 'section123',
+          name: 'Updated Name',
+        }),
+      ).rejects.toThrow(TodoistError);
+    });
+  });
+
+  describe('deleteSection', () => {
+    it('should successfully delete a section', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 204,
+      });
+
+      await todoist.sections.deleteSection('section123');
+
+      expect(mockFetch).toHaveBeenCalledWith('https://api.todoist.com/api/v1/sections/section123', {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        body: undefined,
+      });
+    });
+
+    it('should throw error when sectionId is missing', async () => {
+      await expect(todoist.sections.deleteSection('')).rejects.toThrow('sectionId is required to deleteSection');
+    });
+
+    it('should handle API error', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        json: async () => ({ error: 'Section not found' }),
+      });
+
+      await expect(todoist.sections.deleteSection('section123')).rejects.toThrow(TodoistError);
+    });
+  });
 });

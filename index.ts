@@ -16,6 +16,7 @@ import {
   TodoistCallArgs,
   TodoistError,
   UpdateProjectRequest,
+  UpdateSectionRequest,
   resources,
   todoistApiUrl,
 } from './types';
@@ -47,6 +48,12 @@ export class Todoist {
         headers,
         body: body ? JSON.stringify(body) : undefined,
       });
+
+      // Handle 204 No Content responses (e.g., DELETE operations)
+      if (response.status === 204) {
+        return;
+      }
+
       const responseJson = await response.json();
       if (!response.ok || responseJson.error || responseJson.http_code) {
         throw new TodoistError(responseJson.error || responseJson.http_code, {
@@ -331,6 +338,45 @@ export class Todoist {
         isArchived: response.is_archived,
         isDeleted: response.is_deleted,
       };
+    },
+    updateSection: async (request: UpdateSectionRequest): Promise<Section> => {
+      if (!request.sectionId) {
+        throw new TodoistError('sectionId is required to updateSection');
+      }
+      if (!request.name) {
+        throw new TodoistError('name is required to updateSection');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.sections}/${request.sectionId}`,
+        method: Method.Post,
+        body: {
+          name: request.name,
+        },
+      });
+      return {
+        id: response.id,
+        name: response.name,
+        userId: response.user_id,
+        projectId: response.project_id,
+        sectionOrder: response.section_order,
+        isCollapsed: response.is_collapsed,
+        addedAt: response.added_at,
+        updatedAt: response.updated_at,
+        archivedAt: response.archived_at,
+        isArchived: response.is_archived,
+        isDeleted: response.is_deleted,
+      };
+    },
+    deleteSection: async (sectionId: string): Promise<void> => {
+      if (!sectionId) {
+        throw new TodoistError('sectionId is required to deleteSection');
+      }
+
+      await this.callTodoistApi({
+        resource: `${resources.sections}/${sectionId}`,
+        method: Method.Delete,
+      });
     },
   };
 
