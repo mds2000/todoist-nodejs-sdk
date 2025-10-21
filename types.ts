@@ -104,6 +104,43 @@ export interface Section {
 
 export interface Task {
   id: string;
+  content: string;
+  description: string;
+  projectId: string;
+  sectionId?: string;
+  parentId?: string;
+  order: number;
+  priority: number;
+  due?: {
+    date: string;
+    isRecurring: boolean;
+    datetime?: string;
+    string?: string;
+    timezone?: string;
+  };
+  labels: string[];
+  assigneeId?: string;
+  assignerId?: string;
+  commentCount: number;
+  isCompleted: boolean;
+  createdAt: string;
+  creatorId: string;
+  url: string;
+  duration?: {
+    amount: number;
+    unit: string;
+  };
+}
+
+export interface CompletedTask {
+  id: string;
+  taskId: string;
+  content: string;
+  projectId: string;
+  sectionId?: string;
+  completedAt: string;
+  userId: string;
+  note?: string;
 }
 
 export interface GetProjectsRequest {
@@ -162,4 +199,67 @@ export interface CreateSectionRequest {
 export interface UpdateSectionRequest {
   sectionId: string;
   name: string;
+}
+
+export interface CreateTaskRequest {
+  content: string;
+  description?: string;
+  projectId?: string;
+  sectionId?: string;
+  parentId?: string;
+  order?: number;
+  labels?: string[];
+  priority?: number;
+  dueString?: string;
+  dueDate?: string;
+  dueDatetime?: string;
+  dueLang?: string;
+  assigneeId?: string;
+  duration?: number;
+  durationUnit?: 'minute' | 'day';
+}
+
+export interface UpdateTaskRequest {
+  taskId: string;
+  content?: string;
+  description?: string;
+  labels?: string[];
+  priority?: number;
+  dueString?: string;
+  dueDate?: string;
+  dueDatetime?: string;
+  dueLang?: string;
+  assigneeId?: string;
+  duration?: number;
+  durationUnit?: 'minute' | 'day';
+}
+
+export interface GetTasksByFilterRequest {
+  filter: string;
+  lang?: string;
+  limit?: number;
+}
+
+export interface QuickAddTaskRequest {
+  text: string;
+  note?: string;
+  reminder?: string;
+  autoReminder?: boolean;
+}
+
+export interface MoveTaskRequest {
+  taskId: string;
+  projectId?: string;
+  sectionId?: string;
+  parentId?: string;
+}
+
+export interface GetCompletedTasksRequest {
+  sortBy: 'completionDate' | 'dueDate';
+  projectId?: string;
+  sectionId?: string;
+  limit?: number;
+  cursor?: string;
+  since?: string;
+  until?: string;
 }

@@ -1,15 +1,21 @@
 import {
+  CompletedTask,
   CreateProjectRequest,
   CreateSectionRequest,
+  CreateTaskRequest,
   GetAllTasksRequest,
   GetArchivedProjectsRequest,
+  GetCompletedTasksRequest,
   GetProjectColaboratorsRequest,
   GetProjectsRequest,
   GetSectionsRequest,
+  GetTasksByFilterRequest,
   Method,
+  MoveTaskRequest,
   Project,
   ProjectColaborator,
   ProjectPermissions,
+  QuickAddTaskRequest,
   Section,
   Task,
   TodoistArgs,
@@ -17,6 +23,7 @@ import {
   TodoistError,
   UpdateProjectRequest,
   UpdateSectionRequest,
+  UpdateTaskRequest,
   resources,
   todoistApiUrl,
 } from './types';
@@ -390,6 +397,373 @@ export class Todoist {
         resource: resources.tasks,
         method: Method.Get,
         query: request,
+      });
+    },
+    createTask: async (request: CreateTaskRequest): Promise<Task> => {
+      if (!request.content) {
+        throw new TodoistError('content is required to createTask');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: resources.tasks,
+        method: Method.Post,
+        body: {
+          content: request.content,
+          ...(request.description ? { description: request.description } : {}),
+          ...(request.projectId ? { project_id: request.projectId } : {}),
+          ...(request.sectionId ? { section_id: request.sectionId } : {}),
+          ...(request.parentId ? { parent_id: request.parentId } : {}),
+          ...(request.order !== undefined ? { order: request.order } : {}),
+          ...(request.labels ? { labels: request.labels } : {}),
+          ...(request.priority !== undefined ? { priority: request.priority } : {}),
+          ...(request.dueString ? { due_string: request.dueString } : {}),
+          ...(request.dueDate ? { due_date: request.dueDate } : {}),
+          ...(request.dueDatetime ? { due_datetime: request.dueDatetime } : {}),
+          ...(request.dueLang ? { due_lang: request.dueLang } : {}),
+          ...(request.assigneeId ? { assignee_id: request.assigneeId } : {}),
+          ...(request.duration !== undefined ? { duration: request.duration } : {}),
+          ...(request.durationUnit ? { duration_unit: request.durationUnit } : {}),
+        },
+      });
+      return {
+        id: response.id,
+        content: response.content,
+        description: response.description,
+        projectId: response.project_id,
+        sectionId: response.section_id,
+        parentId: response.parent_id,
+        order: response.order,
+        priority: response.priority,
+        due: response.due
+          ? {
+              date: response.due.date,
+              isRecurring: response.due.is_recurring,
+              datetime: response.due.datetime,
+              string: response.due.string,
+              timezone: response.due.timezone,
+            }
+          : undefined,
+        labels: response.labels || [],
+        assigneeId: response.assignee_id,
+        assignerId: response.assigner_id,
+        commentCount: response.comment_count,
+        isCompleted: response.is_completed,
+        createdAt: response.created_at,
+        creatorId: response.creator_id,
+        url: response.url,
+        duration: response.duration
+          ? {
+              amount: response.duration.amount,
+              unit: response.duration.unit,
+            }
+          : undefined,
+      };
+    },
+    getTaskById: async (taskId: string): Promise<Task> => {
+      if (!taskId) {
+        throw new TodoistError('taskId is required to getTaskById');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.tasks}/${taskId}`,
+        method: Method.Get,
+      });
+      return {
+        id: response.id,
+        content: response.content,
+        description: response.description,
+        projectId: response.project_id,
+        sectionId: response.section_id,
+        parentId: response.parent_id,
+        order: response.order,
+        priority: response.priority,
+        due: response.due
+          ? {
+              date: response.due.date,
+              isRecurring: response.due.is_recurring,
+              datetime: response.due.datetime,
+              string: response.due.string,
+              timezone: response.due.timezone,
+            }
+          : undefined,
+        labels: response.labels || [],
+        assigneeId: response.assignee_id,
+        assignerId: response.assigner_id,
+        commentCount: response.comment_count,
+        isCompleted: response.is_completed,
+        createdAt: response.created_at,
+        creatorId: response.creator_id,
+        url: response.url,
+        duration: response.duration
+          ? {
+              amount: response.duration.amount,
+              unit: response.duration.unit,
+            }
+          : undefined,
+      };
+    },
+    getCompletedTasks: async (request: GetCompletedTasksRequest): Promise<CompletedTask[]> => {
+      if (!request.sortBy) {
+        throw new TodoistError('sortBy is required to getCompletedTasks');
+      }
+
+      const endpoint =
+        request.sortBy === 'completionDate'
+          ? `${resources.tasks}/completed/by_completion_date`
+          : `${resources.tasks}/completed/by_due_date`;
+
+      const response = await this.callTodoistApi({
+        resource: endpoint,
+        method: Method.Get,
+        query: {
+          ...(request.projectId ? { project_id: request.projectId } : {}),
+          ...(request.sectionId ? { section_id: request.sectionId } : {}),
+          ...(request.limit ? { limit: request.limit } : {}),
+          ...(request.cursor ? { cursor: request.cursor } : {}),
+          ...(request.since ? { since: request.since } : {}),
+          ...(request.until ? { until: request.until } : {}),
+        },
+      });
+      return response.items.map((item: any) => ({
+        id: item.id,
+        taskId: item.task_id,
+        content: item.content,
+        projectId: item.project_id,
+        sectionId: item.section_id,
+        completedAt: item.completed_at,
+        userId: item.user_id,
+        note: item.note,
+      }));
+    },
+    getTasksByFilter: async (request: GetTasksByFilterRequest): Promise<Task[]> => {
+      if (!request.filter) {
+        throw new TodoistError('filter is required to getTasksByFilter');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.tasks}/filter`,
+        method: Method.Get,
+        query: {
+          filter: request.filter,
+          ...(request.lang ? { lang: request.lang } : {}),
+          ...(request.limit ? { limit: request.limit } : {}),
+        },
+      });
+      return response.results.map((task: any) => ({
+        id: task.id,
+        content: task.content,
+        description: task.description,
+        projectId: task.project_id,
+        sectionId: task.section_id,
+        parentId: task.parent_id,
+        order: task.order,
+        priority: task.priority,
+        due: task.due
+          ? {
+              date: task.due.date,
+              isRecurring: task.due.is_recurring,
+              datetime: task.due.datetime,
+              string: task.due.string,
+              timezone: task.due.timezone,
+            }
+          : undefined,
+        labels: task.labels || [],
+        assigneeId: task.assignee_id,
+        assignerId: task.assigner_id,
+        commentCount: task.comment_count,
+        isCompleted: task.is_completed,
+        createdAt: task.created_at,
+        creatorId: task.creator_id,
+        url: task.url,
+        duration: task.duration
+          ? {
+              amount: task.duration.amount,
+              unit: task.duration.unit,
+            }
+          : undefined,
+      }));
+    },
+    quickAddTask: async (request: QuickAddTaskRequest): Promise<Task> => {
+      if (!request.text) {
+        throw new TodoistError('text is required to quickAddTask');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.tasks}/quick`,
+        method: Method.Post,
+        body: {
+          text: request.text,
+          ...(request.note ? { note: request.note } : {}),
+          ...(request.reminder ? { reminder: request.reminder } : {}),
+          ...(request.autoReminder !== undefined ? { auto_reminder: request.autoReminder } : {}),
+        },
+      });
+      return {
+        id: response.id,
+        content: response.content,
+        description: response.description,
+        projectId: response.project_id,
+        sectionId: response.section_id,
+        parentId: response.parent_id,
+        order: response.order,
+        priority: response.priority,
+        due: response.due
+          ? {
+              date: response.due.date,
+              isRecurring: response.due.is_recurring,
+              datetime: response.due.datetime,
+              string: response.due.string,
+              timezone: response.due.timezone,
+            }
+          : undefined,
+        labels: response.labels || [],
+        assigneeId: response.assignee_id,
+        assignerId: response.assigner_id,
+        commentCount: response.comment_count,
+        isCompleted: response.is_completed,
+        createdAt: response.created_at,
+        creatorId: response.creator_id,
+        url: response.url,
+        duration: response.duration
+          ? {
+              amount: response.duration.amount,
+              unit: response.duration.unit,
+            }
+          : undefined,
+      };
+    },
+    reopenTask: async (taskId: string): Promise<Task> => {
+      if (!taskId) {
+        throw new TodoistError('taskId is required to reopenTask');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.tasks}/${taskId}/reopen`,
+        method: Method.Post,
+      });
+      return {
+        id: response.id,
+        content: response.content,
+        description: response.description,
+        projectId: response.project_id,
+        sectionId: response.section_id,
+        parentId: response.parent_id,
+        order: response.order,
+        priority: response.priority,
+        due: response.due
+          ? {
+              date: response.due.date,
+              isRecurring: response.due.is_recurring,
+              datetime: response.due.datetime,
+              string: response.due.string,
+              timezone: response.due.timezone,
+            }
+          : undefined,
+        labels: response.labels || [],
+        assigneeId: response.assignee_id,
+        assignerId: response.assigner_id,
+        commentCount: response.comment_count,
+        isCompleted: response.is_completed,
+        createdAt: response.created_at,
+        creatorId: response.creator_id,
+        url: response.url,
+        duration: response.duration
+          ? {
+              amount: response.duration.amount,
+              unit: response.duration.unit,
+            }
+          : undefined,
+      };
+    },
+    closeTask: async (taskId: string): Promise<void> => {
+      if (!taskId) {
+        throw new TodoistError('taskId is required to closeTask');
+      }
+
+      await this.callTodoistApi({
+        resource: `${resources.tasks}/${taskId}/close`,
+        method: Method.Post,
+      });
+    },
+    moveTask: async (request: MoveTaskRequest): Promise<void> => {
+      if (!request.taskId) {
+        throw new TodoistError('taskId is required to moveTask');
+      }
+
+      await this.callTodoistApi({
+        resource: `${resources.tasks}/${request.taskId}/move`,
+        method: Method.Post,
+        body: {
+          ...(request.projectId ? { project_id: request.projectId } : {}),
+          ...(request.sectionId ? { section_id: request.sectionId } : {}),
+          ...(request.parentId ? { parent_id: request.parentId } : {}),
+        },
+      });
+    },
+    updateTask: async (request: UpdateTaskRequest): Promise<Task> => {
+      if (!request.taskId) {
+        throw new TodoistError('taskId is required to updateTask');
+      }
+
+      const response = await this.callTodoistApi({
+        resource: `${resources.tasks}/${request.taskId}`,
+        method: Method.Post,
+        body: {
+          ...(request.content ? { content: request.content } : {}),
+          ...(request.description ? { description: request.description } : {}),
+          ...(request.labels ? { labels: request.labels } : {}),
+          ...(request.priority !== undefined ? { priority: request.priority } : {}),
+          ...(request.dueString ? { due_string: request.dueString } : {}),
+          ...(request.dueDate ? { due_date: request.dueDate } : {}),
+          ...(request.dueDatetime ? { due_datetime: request.dueDatetime } : {}),
+          ...(request.dueLang ? { due_lang: request.dueLang } : {}),
+          ...(request.assigneeId ? { assignee_id: request.assigneeId } : {}),
+          ...(request.duration !== undefined ? { duration: request.duration } : {}),
+          ...(request.durationUnit ? { duration_unit: request.durationUnit } : {}),
+        },
+      });
+      return {
+        id: response.id,
+        content: response.content,
+        description: response.description,
+        projectId: response.project_id,
+        sectionId: response.section_id,
+        parentId: response.parent_id,
+        order: response.order,
+        priority: response.priority,
+        due: response.due
+          ? {
+              date: response.due.date,
+              isRecurring: response.due.is_recurring,
+              datetime: response.due.datetime,
+              string: response.due.string,
+              timezone: response.due.timezone,
+            }
+          : undefined,
+        labels: response.labels || [],
+        assigneeId: response.assignee_id,
+        assignerId: response.assigner_id,
+        commentCount: response.comment_count,
+        isCompleted: response.is_completed,
+        createdAt: response.created_at,
+        creatorId: response.creator_id,
+        url: response.url,
+        duration: response.duration
+          ? {
+              amount: response.duration.amount,
+              unit: response.duration.unit,
+            }
+          : undefined,
+      };
+    },
+    deleteTask: async (taskId: string): Promise<void> => {
+      if (!taskId) {
+        throw new TodoistError('taskId is required to deleteTask');
+      }
+
+      await this.callTodoistApi({
+        resource: `${resources.tasks}/${taskId}`,
+        method: Method.Delete,
       });
     },
   };
