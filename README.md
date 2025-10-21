@@ -97,6 +97,61 @@ const labeledTasks = await todoist.tasks.getTasks({
 const specificTasks = await todoist.tasks.getTasks({
   ids: ['task-id-1', 'task-id-2'],
 });
+
+// Create a new task
+const newTask = await todoist.tasks.createTask({
+  content: 'Buy groceries',
+  description: 'Weekly shopping list',
+  projectId: 'project-id',
+  priority: 2,
+  labels: ['shopping', 'urgent'],
+  dueDate: '2024-12-31',
+});
+
+// Get a specific task by ID
+const task = await todoist.tasks.getTaskById('task-id');
+
+// Get completed tasks
+const completedTasks = await todoist.tasks.getCompletedTasks({
+  sortBy: 'completionDate',
+  projectId: 'project-id',
+  limit: 10,
+});
+
+// Get tasks by filter
+const urgentTasks = await todoist.tasks.getTasksByFilter({
+  filter: '@urgent',
+  limit: 20,
+});
+
+// Quick add a task
+const quickTask = await todoist.tasks.quickAddTask({
+  text: 'Call tomorrow',
+  note: 'Birthday reminder',
+});
+
+// Update a task
+const updatedTask = await todoist.tasks.updateTask({
+  taskId: 'task-id',
+  content: 'Updated task content',
+  priority: 4,
+  labels: ['updated'],
+});
+
+// Move a task to different project
+await todoist.tasks.moveTask({
+  taskId: 'task-id',
+  projectId: 'new-project-id',
+});
+
+// Reopen a completed task
+const reopenedTask = await todoist.tasks.reopenTask('task-id');
+
+// Close a task
+await todoist.tasks.closeTask('task-id');
+
+// Delete a task
+await todoist.tasks.deleteTask('task-id');
 ```
 
 ### Error Handling
@@ -148,6 +203,16 @@ new Todoist({ apiKey: string });
 ##### Tasks
 
 - `getTasks(request: GetAllTasksRequest): Promise<Task[]>`
+- `createTask(request: CreateTaskRequest): Promise<Task>`
+- `getTaskById(taskId: string): Promise<Task>`
+- `getCompletedTasks(request: GetCompletedTasksRequest): Promise<CompletedTask[]>`
+- `getTasksByFilter(request: GetTasksByFilterRequest): Promise<Task[]>`
+- `quickAddTask(request: QuickAddTaskRequest): Promise<Task>`
+- `reopenTask(taskId: string): Promise<Task>`
+- `closeTask(taskId: string): Promise<void>`
+- `moveTask(request: MoveTaskRequest): Promise<void>`
+- `updateTask(request: UpdateTaskRequest): Promise<Task>`
+- `deleteTask(taskId: string): Promise<void>`
 
 ## TypeScript Support
 
@@ -158,9 +223,16 @@ import {
   Todoist,
   Project,
   Task,
+  CompletedTask,
   CreateProjectRequest,
   UpdateProjectRequest,
+  CreateTaskRequest,
+  UpdateTaskRequest,
   GetAllTasksRequest,
+  GetCompletedTasksRequest,
+  GetTasksByFilterRequest,
+  QuickAddTaskRequest,
+  MoveTaskRequest,
 } from 'todoist-nodejs-sdk';
 ```
 
